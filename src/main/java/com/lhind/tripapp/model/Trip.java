@@ -57,6 +57,10 @@ public class Trip {
     @OneToMany(mappedBy = "trip")
     private List<Flight> flights;
 
+    public void addFlight(Flight flight) {
+        this.flights.add(flight);
+    }
+
     @Override
     public String toString() {
         return "Trip{" +

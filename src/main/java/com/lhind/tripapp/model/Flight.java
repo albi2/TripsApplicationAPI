@@ -1,6 +1,7 @@
 package com.lhind.tripapp.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,11 +21,11 @@ public class Flight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="from_country", nullable = false)
+    @Column(name="from_city", nullable = false)
     @NotBlank
     private String from;
 
-    @Column(name="to_country")
+    @Column(name="to_city")
     @NotBlank
     private String to;
 
@@ -49,5 +50,6 @@ public class Flight {
 
     @ManyToOne
     @JoinColumn(name="trip_id")
+    @JsonIgnore
     private Trip trip;
 }
