@@ -1,10 +1,12 @@
 package com.lhind.tripapp.controller;
 
 import com.lhind.tripapp.dto.entityDTO.TripCreationDTO;
+import com.lhind.tripapp.dto.entityDTO.TripIdDTO;
 import com.lhind.tripapp.dto.entityDTO.TripUpdateDTO;
 import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
 import com.lhind.tripapp.dto.pagination.PagedResponse;
 import com.lhind.tripapp.dto.pagination.SearchRequest;
+import com.lhind.tripapp.dto.payload.MessageResponse;
 import com.lhind.tripapp.dto.payload.TripSuccessResponse;
 import com.lhind.tripapp.model.Trip;
 import com.lhind.tripapp.service.TripService;
@@ -66,5 +68,16 @@ public class TripController {
         return this.tripService.findAllTripsByUser(id);
     }
 
+    @GetMapping("/{tripId}")
+    @PreAuthorize("hasRole('USER')")
+    public Trip getTripById(@PathVariable Long tripId) {
+        return this.tripService.findById(tripId);
+    }
 
+    @PostMapping("/requestApproval")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<MessageResponse> requestApproval(@DTO(TripIdDTO.class) Trip requestingApprovalTrip) {
+        this.tripService.requestApproval(requestingApprovalTrip);
+        return ResponseEntity.ok().body(new MessageResponse("Trip status has been changed to WAITING_FOR_APPROVAL!"));
+    }
 }

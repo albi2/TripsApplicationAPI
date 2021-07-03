@@ -18,10 +18,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FlightCreationDTO {
     @NotBlank
-    private String from;
+    private String fromCity;
 
     @NotBlank
-    private String to;
+    private String toCity;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime departureDate;

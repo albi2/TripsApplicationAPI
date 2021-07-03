@@ -18,10 +18,7 @@ import java.time.format.DateTimeFormatter;
 @SpringBootApplication
 @EnableWebMvc
 public class TripappApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(TripappApplication.class, args);
 	}
-
-
 }

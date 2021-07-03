@@ -4,20 +4,17 @@ import com.lhind.tripapp.converter.SearchToPageConverter;
 import com.lhind.tripapp.converter.TripCreationConverter;
 import com.lhind.tripapp.dto.entityDTO.UserDetailsImpl;
 import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
-import com.lhind.tripapp.dto.entityDTO.TripStatusUpdateDTO;
 import com.lhind.tripapp.dto.pagination.PagedResponse;
 import com.lhind.tripapp.dto.pagination.SearchRequest;
+import com.lhind.tripapp.model.ETripStatus;
 import com.lhind.tripapp.model.Trip;
 import com.lhind.tripapp.model.User;
 import com.lhind.tripapp.repository.TripRepository;
 import com.lhind.tripapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +47,12 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     }
 
     @Override
-    public Optional<Trip> findById(Long id) {
-        return this.tripRepository.findById(id);
+    public Trip findById(Long id) {
+        Optional<Trip> trip = this.tripRepository.findById(id);
+        if(!trip.isPresent()) {
+            // throw trip not found exception
+        }
+        return trip.get();
     }
 
     @Override
@@ -92,6 +93,12 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     @Override
     public List<Trip> findAllTripsByUser(Long id) {
         return this.tripRepository.findTripsByUserId(id);
+    }
+
+    @Override
+    public void requestApproval(Trip requestingApprovalTrip) {
+        requestingApprovalTrip.setStatus(ETripStatus.WAITING_FOR_APPROVAL);
+        this.saveTrip(requestingApprovalTrip);
     }
 
 

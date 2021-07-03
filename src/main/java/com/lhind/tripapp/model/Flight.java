@@ -23,11 +23,11 @@ public class Flight {
 
     @Column(name="from_city", nullable = false)
     @NotBlank
-    private String from;
+    private String fromCity;
 
     @Column(name="to_city")
     @NotBlank
-    private String to;
+    private String toCity;
 
     @Column(name="departure_date", nullable = false)
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")

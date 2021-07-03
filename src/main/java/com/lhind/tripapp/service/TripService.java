@@ -16,7 +16,7 @@ public interface TripService {
 
     List<Trip> findAll();
 
-    Optional<Trip> findById(Long id);
+    Trip findById(Long id);
 
     PagedResponse<Trip> findAllByUser(SearchRequest request);
 
@@ -25,4 +25,5 @@ public interface TripService {
 
     List<Trip> findAllTripsByUser(Long request);
 
+    void requestApproval(Trip requestingApprovalTrip);
 }
