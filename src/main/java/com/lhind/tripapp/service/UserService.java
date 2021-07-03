@@ -11,10 +11,6 @@ import java.util.Optional;
 public interface UserService {
     User saveUser(User user);
 
-    void deleteUser(User user);
-
-    List<User> findAll();
-
     UserDTO findById(Long id);
 
     PagedResponse<UserDTO> getUsers(SearchRequest request);

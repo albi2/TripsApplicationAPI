@@ -9,11 +9,14 @@ import com.lhind.tripapp.dto.pagination.PagedResponse;
 import com.lhind.tripapp.dto.pagination.SearchRequest;
 import com.lhind.tripapp.dto.payload.JwtResponse;
 import com.lhind.tripapp.dto.payload.LoginRequest;
+import com.lhind.tripapp.exception.EntityNotFoundException;
 import com.lhind.tripapp.model.Trip;
 import com.lhind.tripapp.model.User;
 import com.lhind.tripapp.dto.entityDTO.UserDetailsImpl;
 import com.lhind.tripapp.repository.TripRepository;
 import com.lhind.tripapp.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements com.lhind.tripapp.service.UserService {
     private TripRepository tripRepository;
     private UserDTOConverter dtoConverter;
     private SearchToPageConverter pageConverter;
+    private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TripRepository tripRepository,
@@ -47,18 +51,14 @@ public class UserServiceImpl implements com.lhind.tripapp.service.UserService {
     }
 
     @Override
-    public void deleteUser(User user) {
-        this.userRepository.delete(user);
-    }
-
-    @Override
-    public List<User> findAll() {
-        return this.userRepository.findAll();
-    }
-
-    @Override
     public UserDTO findById(Long id) {
-        return dtoConverter.toDto(this.userRepository.findById(id).get());
+
+        return dtoConverter.toDto(this.userRepository.findById(id).orElseThrow(
+                () -> {
+                    logger.error("Could not find user with id: " + id );
+                    return new EntityNotFoundException("Could not find user with the provided id!");
+                }
+        ));
     }
 
     @Override

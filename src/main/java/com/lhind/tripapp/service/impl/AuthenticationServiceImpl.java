@@ -15,6 +15,8 @@ import com.lhind.tripapp.repository.RoleRepository;
 import com.lhind.tripapp.repository.UserRepository;
 import com.lhind.tripapp.service.RefreshTokenService;
 import com.lhind.tripapp.util.JwtUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationServiceImpl implements com.lhind.tripapp.service.AuthenticationService {
+
+    private final static Logger logger = LogManager.getLogger();
 
     private RefreshTokenService refreshTokenService;
     private AuthenticationManager authenticationManager;
@@ -101,9 +105,13 @@ public class AuthenticationServiceImpl implements com.lhind.tripapp.service.Auth
     @Override
     public UserDTO signupUser(User request) {
         if(this.userRepository.existsByUsername(request.getUsername())) {
+            this.logger.error("Could not create user because user with username " + request.getUsername() +
+                    "already exists");
             throw new UserExistsException("User with this username already exists!");
         }
         else if(this.userRepository.existsByEmail(request.getEmail())) {
+            this.logger.error("Could not create user because user with email " + request.getEmail() +
+                    "already exists");
             throw new UserExistsException("User with this email already exists!");
         }
 

@@ -6,11 +6,14 @@ import com.lhind.tripapp.dto.entityDTO.UserDetailsImpl;
 import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
 import com.lhind.tripapp.dto.pagination.PagedResponse;
 import com.lhind.tripapp.dto.pagination.SearchRequest;
+import com.lhind.tripapp.exception.EntityNotFoundException;
 import com.lhind.tripapp.model.ETripStatus;
 import com.lhind.tripapp.model.Trip;
 import com.lhind.tripapp.model.User;
 import com.lhind.tripapp.repository.TripRepository;
 import com.lhind.tripapp.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,17 +25,15 @@ import java.util.Optional;
 public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     private TripRepository tripRepository;
     private UserRepository userRepository;
-    private TripCreationConverter tripCreationConverter;
     private SearchToPageConverter pageConverter;
+    private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     public TripServiceImpl(TripRepository tripRepository,
                            UserRepository userRepository,
-                           TripCreationConverter tripCreationConverter,
                            SearchToPageConverter pageConverter) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
-        this.tripCreationConverter = tripCreationConverter;
         this.pageConverter = pageConverter;
     }
 
@@ -48,11 +49,13 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
 
     @Override
     public Trip findById(Long id) {
-        Optional<Trip> trip = this.tripRepository.findById(id);
-        if(!trip.isPresent()) {
-            // throw trip not found exception
-        }
-        return trip.get();
+        Trip trip = this.tripRepository.findById(id).orElseThrow(
+                () -> {
+                    logger.error("Could not find trip with id: " + id);
+                    return new EntityNotFoundException("Could not find trip with the provided id!");
+                }
+        );
+        return trip;
     }
 
     @Override
@@ -73,21 +76,16 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     @Override
     public Trip addTrip(Trip toBeAddedTrip) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> user = this.userRepository.findById(userDetails.getId());
+        User tripOwner = this.userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> {
+                    logger.error("Trip could not be added because user is not logged in!");
+                    return new EntityNotFoundException("Logged in user does not exist!");
+                });
 
-        if(user.isPresent()) {
-            User tripOwner = user.get();
             tripOwner.addTrip(toBeAddedTrip);
             toBeAddedTrip.setUser(tripOwner);
-            // Update user, cascade to trip
             this.userRepository.save(tripOwner);
             return this.tripRepository.save(toBeAddedTrip);
-        }
-        else {
-            // throw user not found exception
-            return null;
-        }
-
     }
 
     @Override
@@ -109,6 +107,8 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
         }
         else {
             // Throw trip not found exception
+            logger.error("Could not delete trip with id "+ request.getTripId() + " because it does not exist!");
+            throw new EntityNotFoundException("Could not delete the trip because it does not exist!");
         }
     }
 }
