@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 @SpringBootApplication
-@EnableWebMvc
 public class TripappApplication {
 	private static final Logger logger= LogManager.getLogger(TripappApplication.class);
 	public static void main(String[] args) {

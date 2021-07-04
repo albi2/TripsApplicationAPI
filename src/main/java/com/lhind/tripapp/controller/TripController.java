@@ -11,6 +11,9 @@ import com.lhind.tripapp.dto.payload.TripSuccessResponse;
 import com.lhind.tripapp.model.Trip;
 import com.lhind.tripapp.service.TripService;
 import com.lhind.tripapp.util.DTO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,9 +50,15 @@ public class TripController {
         return ResponseEntity.ok(newTrip);
     }
 
+    /**
+     * Update a trip by providing the trip you want to update with the ID
+     * @param trip
+     * @return
+     */
+
     @PostMapping("/update-trip")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Trip> postUpdateTrip(@DTO(TripUpdateDTO.class) Trip trip) {
+    public ResponseEntity<Trip> postUpdateTrip( @DTO(TripUpdateDTO.class) Trip trip) {
         Trip updatedTrip = this.tripService.saveTrip(trip);
         return ResponseEntity.ok(updatedTrip);
     }
