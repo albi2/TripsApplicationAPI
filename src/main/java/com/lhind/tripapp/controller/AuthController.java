@@ -5,10 +5,13 @@ import com.lhind.tripapp.dto.payload.*;
 import com.lhind.tripapp.model.User;
 import com.lhind.tripapp.service.AuthenticationService;
 import com.lhind.tripapp.util.DTO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -40,8 +43,11 @@ public class AuthController {
 
     @PostMapping("/signup")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDTO> registerUser(@DTO(UserCreationDTO.class) User request) {
-        UserDTO newUser = this.authenticationService.signupUser(request);
-        return ResponseEntity.ok().body(newUser);
+    @ApiImplicitParams({ @ApiImplicitParam(name = "newUser",
+            value = "Object containing data for the user that will be created", paramType = "body",
+            dataType = "com.lhind.tripapp.dto.entityDTO.UserCreationDTO") })
+    public ResponseEntity<UserDTO> registerUser(@ApiIgnore @DTO(UserCreationDTO.class) User newUser) {
+        UserDTO createdUser = this.authenticationService.signupUser(newUser);
+        return ResponseEntity.ok().body(createdUser);
     }
 }

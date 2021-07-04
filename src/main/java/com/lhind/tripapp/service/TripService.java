@@ -1,5 +1,6 @@
 package com.lhind.tripapp.service;
 
+import com.lhind.tripapp.dto.entityDTO.TripDTO;
 import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
 import com.lhind.tripapp.dto.entityDTO.TripStatusUpdateDTO;
 import com.lhind.tripapp.dto.pagination.PagedResponse;
@@ -10,20 +11,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TripService {
-    Trip saveTrip(Trip trip);
+    TripDTO saveTrip(Trip trip);
 
     void deleteTrip(TripDeletionDTO request);
 
-    List<Trip> findAll();
+    TripDTO findById(Long id);
 
-    Trip findById(Long id);
+    PagedResponse<TripDTO> findAllByUser(SearchRequest request);
 
-    PagedResponse<Trip> findAllByUser(SearchRequest request);
-
-    Trip addTrip(Trip trip);
+    TripDTO addTrip(Trip trip);
 
 
-    List<Trip> findAllTripsByUser(Long request);
+    List<TripDTO> findAllTripsByUser(Long request);
 
     void requestApproval(Trip requestingApprovalTrip);
 }

@@ -1,6 +1,6 @@
 package com.lhind.tripapp;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lhind.tripapp.dto.entityDTO.TripUpdateDTO;
+import com.lhind.tripapp.dto.entityDTO.*;
 import com.lhind.tripapp.util.DTOModelMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +48,11 @@ public class SpringConfigurationClass implements WebMvcConfigurer  {
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .additionalModels(resolver.resolve(TripUpdateDTO.class),
+                                resolver.resolve(TripIdDTO.class),
+                                resolver.resolve(TripCreationDTO.class),
+                                resolver.resolve(TripStatusUpdateDTO.class),
+                                resolver.resolve(UserCreationDTO.class));
     }
 }

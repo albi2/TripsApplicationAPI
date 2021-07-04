@@ -1,9 +1,6 @@
 package com.lhind.tripapp.controller;
 
-import com.lhind.tripapp.dto.entityDTO.TripCreationDTO;
-import com.lhind.tripapp.dto.entityDTO.TripIdDTO;
-import com.lhind.tripapp.dto.entityDTO.TripUpdateDTO;
-import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
+import com.lhind.tripapp.dto.entityDTO.*;
 import com.lhind.tripapp.dto.pagination.PagedResponse;
 import com.lhind.tripapp.dto.pagination.SearchRequest;
 import com.lhind.tripapp.dto.payload.MessageResponse;
@@ -19,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -39,14 +37,17 @@ public class TripController {
 
     @GetMapping("")
     @PreAuthorize("hasRole('USER')")
-    public PagedResponse<Trip> getTrips(@Valid SearchRequest request) {
+    public PagedResponse<TripDTO> getTrips(@Valid SearchRequest request) {
         return this.tripService.findAllByUser(request);
     }
 
     @PostMapping("/add-trip")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Trip> postAddTripToUser(@DTO(TripCreationDTO.class) Trip trip) {
-        Trip newTrip = this.tripService.addTrip(trip);
+    @ApiImplicitParams({ @ApiImplicitParam(name = "trip",
+            value = "The body of the trip that will be created", paramType = "body",
+            dataType = "com.lhind.tripapp.dto.entityDTO.TripCreationDTO") })
+    public ResponseEntity<TripDTO> postAddTripToUser(@ApiIgnore @DTO(TripCreationDTO.class) Trip trip) {
+        TripDTO newTrip = this.tripService.addTrip(trip);
         return ResponseEntity.ok(newTrip);
     }
 
@@ -55,11 +56,13 @@ public class TripController {
      * @param trip
      * @return
      */
-
     @PostMapping("/update-trip")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Trip> postUpdateTrip( @DTO(TripUpdateDTO.class) Trip trip) {
-        Trip updatedTrip = this.tripService.saveTrip(trip);
+    @ApiImplicitParams({ @ApiImplicitParam(name = "trip",
+            value = "Object containing id of trip to be updated and the values of the fields that will be updated",
+            paramType = "body", dataType = "com.lhind.tripapp.dto.entityDTO.TripUpdateDTO") })
+    public ResponseEntity<TripDTO> postUpdateTrip(@ApiIgnore @DTO(TripUpdateDTO.class) Trip trip) {
+        TripDTO updatedTrip = this.tripService.saveTrip(trip);
         return ResponseEntity.ok(updatedTrip);
     }
 
@@ -73,19 +76,21 @@ public class TripController {
     // Get all trips from user id provided that have a status of WAITING_FOR_APPROVAL
     @GetMapping("/all-trips-by-user/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Trip> getAllTripsByUserId(@PathVariable @Min(1) Long id) {
+    public List<TripDTO> getAllTripsByUserId(@PathVariable @Min(1) Long id) {
         return this.tripService.findAllTripsByUser(id);
     }
 
     @GetMapping("/{tripId}")
     @PreAuthorize("hasRole('USER')")
-    public Trip getTripById(@PathVariable Long tripId) {
+    public TripDTO getTripById(@PathVariable Long tripId) {
         return this.tripService.findById(tripId);
     }
 
     @PostMapping("/requestApproval")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MessageResponse> requestApproval(@DTO(TripIdDTO.class) Trip requestingApprovalTrip) {
+    @ApiImplicitParams({ @ApiImplicitParam(name = "requestingApprovalTrip",
+            value = "Object containing id of the trip whose status will be updated", paramType = "body", dataType = "com.lhind.tripapp.dto.entityDTO.TripIdDTO") })
+    public ResponseEntity<MessageResponse> requestApproval(@ApiIgnore @DTO(TripIdDTO.class)  Trip requestingApprovalTrip) {
         this.tripService.requestApproval(requestingApprovalTrip);
         return ResponseEntity.ok().body(new MessageResponse("Trip status has been changed to WAITING_FOR_APPROVAL!"));
     }

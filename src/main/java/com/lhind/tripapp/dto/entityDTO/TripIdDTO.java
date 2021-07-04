@@ -1,5 +1,6 @@
 package com.lhind.tripapp.dto.entityDTO;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,5 +13,6 @@ import javax.validation.constraints.NotNull;
 public class TripIdDTO {
     @Id
     @NotNull
+    @ApiModelProperty(name="id", dataType = "long", example = "1")
     private Long id;
 }

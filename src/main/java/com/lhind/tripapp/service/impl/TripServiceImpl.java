@@ -2,6 +2,7 @@ package com.lhind.tripapp.service.impl;
 
 import com.lhind.tripapp.converter.SearchToPageConverter;
 import com.lhind.tripapp.converter.TripCreationConverter;
+import com.lhind.tripapp.dto.entityDTO.TripDTO;
 import com.lhind.tripapp.dto.entityDTO.UserDetailsImpl;
 import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
 import com.lhind.tripapp.dto.pagination.PagedResponse;
@@ -14,52 +15,52 @@ import com.lhind.tripapp.repository.TripRepository;
 import com.lhind.tripapp.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     private TripRepository tripRepository;
     private UserRepository userRepository;
     private SearchToPageConverter pageConverter;
+    private ModelMapper mapper;
     private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     public TripServiceImpl(TripRepository tripRepository,
                            UserRepository userRepository,
-                           SearchToPageConverter pageConverter) {
+                           SearchToPageConverter pageConverter,
+                           ModelMapper modelMapper) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
         this.pageConverter = pageConverter;
+        this.mapper = modelMapper;
     }
 
     @Override
-    public Trip saveTrip(Trip trip) {
-        return this.tripRepository.save(trip);
+    public TripDTO saveTrip(Trip trip) {
+        return this.mapper.map(this.tripRepository.save(trip), TripDTO.class);
     }
 
     @Override
-    public List<Trip> findAll() {
-        return this.tripRepository.findAll();
-    }
-
-    @Override
-    public Trip findById(Long id) {
-        Trip trip = this.tripRepository.findById(id).orElseThrow(
+    public TripDTO findById(Long id) {
+        TripDTO trip = this.mapper.map(this.tripRepository.findById(id).orElseThrow(
                 () -> {
                     logger.error("Could not find trip with id: " + id);
                     return new EntityNotFoundException("Could not find trip with the provided id!");
                 }
-        );
+        ), TripDTO.class);
         return trip;
     }
 
     @Override
-    public PagedResponse<Trip> findAllByUser(SearchRequest request) {
+    public PagedResponse<TripDTO> findAllByUser(SearchRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User loggedInUser = this.userRepository.findById(userDetails.getId()).get();
@@ -68,13 +69,18 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
         Page<Trip> tripsPage =
                 this.tripRepository.findAllByUser(loggedInUser,
                         this.pageConverter.toPageRequest(request));
-        List<Trip> trips = tripsPage.getContent();
+        List<TripDTO> trips = tripsPage.getContent().
+                stream().
+                map(trip -> {
+                    return mapper.map(trip, TripDTO.class);
+                })
+                .collect(Collectors.toList());
 
-        return new PagedResponse<Trip>(trips, tripsPage.getSize(),tripsPage.getTotalElements());
+        return new PagedResponse<TripDTO>(trips, tripsPage.getSize(),tripsPage.getTotalElements());
     }
 
     @Override
-    public Trip addTrip(Trip toBeAddedTrip) {
+    public TripDTO addTrip(Trip toBeAddedTrip) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User tripOwner = this.userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> {
@@ -85,12 +91,17 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
             tripOwner.addTrip(toBeAddedTrip);
             toBeAddedTrip.setUser(tripOwner);
             this.userRepository.save(tripOwner);
-            return this.tripRepository.save(toBeAddedTrip);
+            return this.mapper.map(this.tripRepository.save(toBeAddedTrip), TripDTO.class);
     }
 
     @Override
-    public List<Trip> findAllTripsByUser(Long id) {
-        return this.tripRepository.findTripsByUserId(id);
+    public List<TripDTO> findAllTripsByUser(Long id) {
+        List<TripDTO> trips = this.tripRepository.findTripsByUserId(id)
+                .stream()
+                .map(trip -> {
+                    return this.mapper.map(trip, TripDTO.class);
+                }).collect(Collectors.toList());
+        return trips;
     }
 
     @Override
