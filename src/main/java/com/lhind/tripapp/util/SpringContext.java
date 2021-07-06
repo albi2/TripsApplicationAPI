@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+// Class used to get Beans in Non-Bean components
 @Component
 public class SpringContext implements ApplicationContextAware {
 
@@ -22,7 +23,6 @@ public class SpringContext implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-
         // store ApplicationContext reference to access required beans later on
         SpringContext.context = context;
     }

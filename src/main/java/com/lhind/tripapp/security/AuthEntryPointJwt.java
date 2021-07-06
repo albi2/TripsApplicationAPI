@@ -25,13 +25,13 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         logger.error("Unauthorized error: {}",e.getMessage());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized !!");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthenticated !!");
     }
 
     @ExceptionHandler(value = { AccessDeniedException.class })
     public void commence(HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex ) throws IOException {
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getOutputStream().println("{ \"error\": \"" + ex.getMessage() + "\" }");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getOutputStream().println("{ \"Unauthorized error\": \"" + ex.getMessage() + "\" }");
     }
 }

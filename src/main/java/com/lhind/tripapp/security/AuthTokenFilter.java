@@ -2,6 +2,8 @@ package com.lhind.tripapp.security;
 
 import com.lhind.tripapp.service.impl.UserDetailsServiceImpl;
 import com.lhind.tripapp.util.JwtUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,10 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 // Provide the principal for the authentication on each request
+
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private JwtUtils jwtUtils;
     private UserDetailsServiceImpl userDetailsService;
+    private static final Logger logger = LogManager.getLogger();
 
 //    @Autowired
 //    public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsServiceImpl userDetailsService) {
@@ -55,7 +59,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         }
         catch (Exception e) {
-            System.out.println("Cannot set user authentication: {}" + e);
+            logger.error("Cannot set user authentication: {}", e);
         }
 
         filterChain.doFilter(request, response);
