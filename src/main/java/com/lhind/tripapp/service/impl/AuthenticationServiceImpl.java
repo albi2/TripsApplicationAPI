@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements com.lhind.tripapp.service.Auth
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
         return new JwtResponse(jwt,
-                refreshToken.getRefreshToken(),
+                refreshToken.getToken(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),

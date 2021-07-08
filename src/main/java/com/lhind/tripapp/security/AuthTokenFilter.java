@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,7 +24,7 @@ import java.io.IOException;
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private JwtUtils jwtUtils;
-    private UserDetailsServiceImpl userDetailsService;
+    private UserDetailsService userDetailsService;
     private static final Logger logger = LogManager.getLogger();
 
 //    @Autowired
@@ -83,7 +84,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     @Autowired
-    public void setUserDetailsService(UserDetailsServiceImpl userDetailsService) {
+    public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 }

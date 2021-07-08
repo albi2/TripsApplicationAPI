@@ -36,6 +36,7 @@ public class SpringConfigurationClass implements WebMvcConfigurer  {
         return new ModelMapper();
     }
 
+    // Krijojme object mapper te ri qe do e shtojme tek argument resolvers
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().applicationContext(this.applicationContext).build();

@@ -1,6 +1,7 @@
 package com.lhind.tripapp.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lhind.tripapp.exception.EntityNotFoundException;
 import com.lhind.tripapp.exception.RoleNotFoundException;
 import com.lhind.tripapp.model.ERole;
 import com.lhind.tripapp.model.Role;
@@ -85,12 +86,16 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
             return modelMapper.map(dto, parameter.getParameterType());
         } else {
             Object persistedObject = entityManager.find(parameter.getParameterType(), id);
+            if(persistedObject == null) {
+                throw new EntityNotFoundException("Could not find entity of type" +
+                        " " +parameter.getParameterType().getName() + " with id " + id +".");
+            }
             modelMapper.map(dto, persistedObject);
             return persistedObject;
         }
     }
 
-    // This method by default converts the request request into the class
+    // This method by default converts the request  into the class
     // provided after request Body
     // We override it to convert the request into the DTO class provided in the interface
     // the rest is done by resolve argument
@@ -110,6 +115,7 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
     // to convert DTO to entity
     private Object getEntityId(@NotNull Object dto) {
         for (Field field : dto.getClass().getDeclaredFields()) {
+
             if (field.getAnnotation(Id.class) != null) {
                 try {
                     field.setAccessible(true);

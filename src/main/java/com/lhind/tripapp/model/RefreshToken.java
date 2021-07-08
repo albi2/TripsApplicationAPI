@@ -1,8 +1,15 @@
 package com.lhind.tripapp.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.Instant;
 
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity(name="refreshtoken")
 public class RefreshToken {
     @Id
@@ -19,35 +26,5 @@ public class RefreshToken {
     @Column(nullable = false)
     private Instant expiryDate;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getRefreshToken() {
-        return token;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.token = refreshToken;
-    }
-
-    public Instant getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Instant expiryDate) {
-        this.expiryDate = expiryDate;
-    }
 }

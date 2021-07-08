@@ -50,7 +50,7 @@ public class RefreshTokenServiceImpl implements com.lhind.tripapp.service.Refres
                 }
         ));
         refreshToken.setExpiryDate(Instant.now().plusMillis(this.refreshTokenDuration));
-        refreshToken.setRefreshToken(UUID.randomUUID().toString());
+        refreshToken.setToken(UUID.randomUUID().toString());
 
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
@@ -59,9 +59,9 @@ public class RefreshTokenServiceImpl implements com.lhind.tripapp.service.Refres
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         if(token.getExpiryDate().compareTo(Instant.now()) < 0) {
-            logger.error("Refresh token has alredy expired: "+ token.getRefreshToken()+ " will be deleted!");
+            logger.error("Refresh token has alredy expired: "+ token.getToken()+ " will be deleted!");
             refreshTokenRepository.delete(token);
-            throw new RefreshTokenException(token.getRefreshToken(),"The refresh token has already expired!");
+            throw new RefreshTokenException(token.getToken(),"The refresh token has already expired!");
         }
 
         return token;

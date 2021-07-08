@@ -1,9 +1,7 @@
 package com.lhind.tripapp.service.impl;
 
-import com.lhind.tripapp.converter.TripCreationConverter;
 import com.lhind.tripapp.converter.UserDetailsConverter;
 import com.lhind.tripapp.model.User;
-import com.lhind.tripapp.dto.entityDTO.UserDetailsImpl;
 import com.lhind.tripapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,9 +13,9 @@ import javax.transaction.Transactional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     private UserRepository userRepository;
     private UserDetailsConverter userDetailsConverter;
+
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository,
                                   UserDetailsConverter userDetailsConverter) {

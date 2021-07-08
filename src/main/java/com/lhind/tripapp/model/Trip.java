@@ -2,6 +2,7 @@ package com.lhind.tripapp.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lhind.tripapp.validators.DateRange;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name="trips")
+@DateRange(first="departureDate",second="arrivalDate")
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +63,10 @@ public class Trip {
 
     public void addFlight(Flight flight) {
         this.flights.add(flight);
+    }
+
+    public void removeFlight(Flight toBeRemovedFlight) {
+        this.flights.remove(toBeRemovedFlight);
     }
 
     @Override

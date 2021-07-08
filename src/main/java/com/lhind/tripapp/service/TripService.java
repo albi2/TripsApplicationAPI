@@ -21,7 +21,6 @@ public interface TripService {
 
     TripDTO addTrip(Trip trip);
 
-
     List<TripDTO> findAllTripsByUser(Long request);
 
     void requestApproval(Trip requestingApprovalTrip);

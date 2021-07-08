@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,6 +82,7 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     }
 
     @Override
+    @Transactional
     public TripDTO addTrip(Trip toBeAddedTrip) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User tripOwner = this.userRepository.findById(userDetails.getId())
@@ -114,6 +117,12 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     @Override
     public void deleteTrip(TripDeletionDTO request) {
         if(this.tripRepository.existsById(request.getTripId())) {
+            Trip trip = tripRepository.findById(request.getTripId()).get();
+            trip.getFlights().forEach(
+                    flight -> {
+                        flight.setTrip(null);
+                    }
+            );
             this.tripRepository.deleteById(request.getTripId());
         }
         else {
