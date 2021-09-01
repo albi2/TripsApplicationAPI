@@ -1,7 +1,10 @@
 package com.lhind.tripapp.dto.payload;
 
+import lombok.AllArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
 
+@AllArgsConstructor
 public class LoginRequest {
     @NotBlank
     private String username;

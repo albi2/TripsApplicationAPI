@@ -61,7 +61,6 @@ public class AuthenticationServiceImpl implements com.lhind.tripapp.service.Auth
     @Override
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
         // Create authentication object for spring security from given user
-        // Throws unauthorized error in case of inexistent user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -99,14 +98,13 @@ public class AuthenticationServiceImpl implements com.lhind.tripapp.service.Auth
                     return new TokenRefreshResponse(jwtToken, requestRefreshToken);
                 })
                 .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,"Refresh token not in database!"));
-
     }
 
     @Override
     public UserDTO signupUser(User request) {
         if(this.userRepository.existsByUsername(request.getUsername())) {
             this.logger.error("Could not create user because user with username " + request.getUsername() +
-                    "already exists");
+                    " already exists");
             throw new UserExistsException("User with this username already exists!");
         }
         else if(this.userRepository.existsByEmail(request.getEmail())) {

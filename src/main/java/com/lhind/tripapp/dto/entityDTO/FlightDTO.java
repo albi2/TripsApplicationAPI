@@ -2,6 +2,7 @@ package com.lhind.tripapp.dto.entityDTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lhind.tripapp.model.EFlightClass;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class FlightDTO {

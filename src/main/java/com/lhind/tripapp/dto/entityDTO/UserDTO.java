@@ -1,6 +1,7 @@
 package com.lhind.tripapp.dto.entityDTO;
 
 import com.lhind.tripapp.model.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class UserDTO {
@@ -25,10 +27,4 @@ public class UserDTO {
 
     private List<String> roles;
 
-    public UserDTO(Long id, String username, String email, List<String> roles) {
-        id = id;
-        this.username = username;
-        this.email = email;
-        this.roles = roles;
-    }
 }

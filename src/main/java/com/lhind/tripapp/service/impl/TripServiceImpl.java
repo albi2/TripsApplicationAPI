@@ -1,7 +1,6 @@
 package com.lhind.tripapp.service.impl;
 
 import com.lhind.tripapp.converter.SearchToPageConverter;
-import com.lhind.tripapp.converter.TripCreationConverter;
 import com.lhind.tripapp.dto.entityDTO.TripDTO;
 import com.lhind.tripapp.dto.entityDTO.UserDetailsImpl;
 import com.lhind.tripapp.dto.entityDTO.TripDeletionDTO;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,12 +50,12 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
 
     @Override
     public TripDTO findById(Long id) {
-        TripDTO trip = this.mapper.map(this.tripRepository.findById(id).orElseThrow(
+        Trip t = this.tripRepository.findById(id).orElseThrow(
                 () -> {
                     logger.error("Could not find trip with id: " + id);
                     return new EntityNotFoundException("Could not find trip with the provided id!");
-                }
-        ), TripDTO.class);
+                });
+        TripDTO trip = this.mapper.map(t, TripDTO.class);
         return trip;
     }
 
@@ -66,7 +64,6 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
         UserDetailsImpl userDetails = (UserDetailsImpl)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User loggedInUser = this.userRepository.findById(userDetails.getId()).get();
-
 
         Page<Trip> tripsPage =
                 this.tripRepository.findAllByUser(loggedInUser,
@@ -91,10 +88,10 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
                     return new EntityNotFoundException("Logged in user does not exist!");
                 });
 
-            tripOwner.addTrip(toBeAddedTrip);
-            toBeAddedTrip.setUser(tripOwner);
-            this.userRepository.save(tripOwner);
-            return this.mapper.map(this.tripRepository.save(toBeAddedTrip), TripDTO.class);
+        tripOwner.addTrip(toBeAddedTrip);
+        toBeAddedTrip.setUser(tripOwner);
+        this.userRepository.save(tripOwner);
+        return this.mapper.map(this.tripRepository.save(toBeAddedTrip), TripDTO.class);
     }
 
     @Override
@@ -110,7 +107,7 @@ public class TripServiceImpl implements com.lhind.tripapp.service.TripService {
     @Override
     public void requestApproval(Trip requestingApprovalTrip) {
         requestingApprovalTrip.setStatus(ETripStatus.WAITING_FOR_APPROVAL);
-        this.saveTrip(requestingApprovalTrip);
+        this.tripRepository.save(requestingApprovalTrip);
     }
 
 

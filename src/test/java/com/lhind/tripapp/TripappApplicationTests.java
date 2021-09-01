@@ -16,9 +16,7 @@ class TripappApplicationTests {
 
 	@Test
 	void contextLoads() {
-
 		System.out.println(encoder.encode("12345678"));
-		System.out.println(new Date(""));
 	}
 
 }
